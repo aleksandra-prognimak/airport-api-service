@@ -12,6 +12,9 @@ class AirplaneType(models.Model):
 class City(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    class Meta:
+        verbose_name_plural = "cities"
+
     def __str__(self):
         return self.name
 
@@ -19,6 +22,9 @@ class City(models.Model):
 class Crew(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name_plural = "crew"
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -52,10 +58,10 @@ class Airplane(models.Model):
 
 class Route(models.Model):
     source = models.ForeignKey(
-        Airport, on_delete=models.CASCADE, related_name="routes"
+        Airport, on_delete=models.CASCADE, related_name="source_routes"
     )
     destination = models.ForeignKey(
-        Airport, on_delete=models.CASCADE, related_name="routes"
+        Airport, on_delete=models.CASCADE, related_name="destination_routes"
     )
     distance = models.IntegerField()
 
@@ -78,7 +84,7 @@ class Flight(models.Model):
         ordering = ["-departure_time"]
 
     def __str__(self):
-        return f"{str(self.route)} {(self.departure_time)}"
+        return f"{str(self.route)} {self.departure_time}"
 
 
 class Order(models.Model):
