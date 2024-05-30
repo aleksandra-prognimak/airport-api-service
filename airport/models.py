@@ -84,6 +84,10 @@ class Route(models.Model):
             force_insert, force_update, using, update_fields
         )
 
+    @property
+    def trip_name(self):
+        return f"{self.source.name} -> {self.destination.name}"
+
     def __str__(self):
         return f"{self.source.name} -> {self.destination.name}"
 
