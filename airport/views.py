@@ -15,6 +15,7 @@ from airport.models import (
     Flight,
     Order,
 )
+from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
 from airport.serializers import (
     AirplaneTypeSerializer,
     CitySerializer,
@@ -40,6 +41,7 @@ class AirplaneTypeViewSet(
 ):
     queryset = AirplaneType.objects.all()
     serializer_class = AirplaneTypeSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CityViewSet(
@@ -49,6 +51,7 @@ class CityViewSet(
 ):
     queryset = City.objects.all()
     serializer_class = CitySerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CrewViewSet(
@@ -58,6 +61,7 @@ class CrewViewSet(
 ):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class AirportViewSet(
@@ -66,6 +70,7 @@ class AirportViewSet(
     GenericViewSet,
 ):
     queryset = Airport.objects.select_related("closest_big_city")
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         name = self.request.query_params.get("name")
@@ -111,6 +116,7 @@ class AirplaneViewSet(
     GenericViewSet,
 ):
     queryset = Airplane.objects.select_related("airplane_type")
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -125,6 +131,7 @@ class RouteViewSet(
     GenericViewSet,
 ):
     queryset = Route.objects.select_related("source", "destination")
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -149,6 +156,7 @@ class FlightViewSet(
             )
         )
     )
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
