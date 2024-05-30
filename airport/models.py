@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -47,8 +48,8 @@ class Airport(models.Model):
 
 class Airplane(models.Model):
     name = models.CharField(max_length=255)
-    rows = models.IntegerField()
-    seats_in_row = models.IntegerField()
+    rows = models.IntegerField(validators=[MinValueValidator(1)])
+    seats_in_row = models.IntegerField(validators=[MinValueValidator(1)])
     airplane_type = models.ForeignKey(
         AirplaneType, on_delete=models.CASCADE, related_name="airplanes"
     )
@@ -64,7 +65,24 @@ class Route(models.Model):
     destination = models.ForeignKey(
         Airport, on_delete=models.CASCADE, related_name="destination_routes"
     )
-    distance = models.IntegerField()
+    distance = models.IntegerField(validators=[MinValueValidator(1)])
+
+    def clean(self):
+        if self.source == self.destination:
+            raise ValidationError("Source and Destination cannot be the same")
+
+    def save(
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None,
+    ):
+        self.full_clean()
+
+        return super(Route, self).save(
+            force_insert, force_update, using, update_fields
+        )
 
     def __str__(self):
         return f"{self.source.name} -> {self.destination.name}"
